@@ -4,6 +4,7 @@ const selects = document.querySelectorAll('select')
 const inputs = document.querySelectorAll('input[type="number"]')
 const addBtn = document.querySelector('#addBtn')
 const showBtn = document.querySelector('#showBtn')
+const swapBtn = document.querySelector('#swapBtn')
 const favModalEl = document.querySelector('#favModal')
 const favModal = new bootstrap.Modal(favModalEl)
 
@@ -38,24 +39,27 @@ async function fetchCurrency(currency) {
   }
 }
 
-async function render(index) {
-  function calculate(doller) {
-    const rate = nowData[next.currency()]
-    return doller * rate
+async function render(index = 0) {
+  function calculate(doller, isReverse) {
+    const rate = nowData[compared.currency()]
+    return isReverse ? doller / rate : doller * rate
   }
   const now = {
-    input: inputs[index],
+    input: inputs[0],
     doller: function () {
       return this.input.value
     },
-    select: selects[index],
+    select: selects[0],
     currency: function () {
       return this.select.value
     },
   }
-  const next = {
-    input: inputs[index === 0 ? 1 : 0],
-    select: selects[index === 0 ? 1 : 0],
+  const compared = {
+    input: inputs[1],
+    doller: function () {
+      return this.input.value
+    },
+    select: selects[1],
     currency: function () {
       return this.select.value
     },
@@ -63,7 +67,12 @@ async function render(index) {
   if (nowCurrency !== now.currency()) {
     nowData = await fetchCurrency(now.currency())
   }
-  next.input.value = calculate(now.doller())
+
+  if (index === 0) {
+    compared.input.value = calculate(now.doller(), false)
+  } else {
+    now.input.value = calculate(compared.doller(), true)
+  }
 }
 
 function removeFav(index) {
@@ -143,11 +152,6 @@ function renderFavList() {
   favModal.show()
 }
 
-var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-var toastList = toastElList.map(function (toastEl) {
-  return new bootstrap.Toast(toastEl)
-})
-
 function generateToast(text) {
   const html = `
   <div class="toast show mt-2" role="alert" aria-live="assertive" aria-atomic="true">
@@ -170,6 +174,17 @@ showBtn.addEventListener('click', async () => {
   const content = await fileActions.read('fav.txt')
   favList = content
   renderFavList()
+})
+
+swapBtn.addEventListener('click', () => {
+  const tmp = {
+    now: selects[0].value,
+    compared: selects[1].value,
+  }
+  selects[0].value = tmp.compared
+  selects[1].value = tmp.now
+
+  render()
 })
 
 favModalEl.addEventListener('hidden.bs.modal', event => {
