@@ -1,19 +1,91 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
-    <link href="./styles.css" rel="stylesheet">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
 
-    <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"> -->
+  <title>貨幣匯率轉換器</title>
+
+  <link href="./node_modules/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+
+  <script>
+    require('@popperjs/core');
+    const bootstrap = require('bootstrap');
+    const { ipcRenderer } = require('electron');
+  </script>
+</head>
+
+<body class="py-5 vh-100">
+
+  <div class="container bg-light rounded p-5 h-100 d-flex flex-column shadow-sm">
+    <img src="assets/images/swap.png" alt="icon" width="100" class="d-block mx-auto mb-4">
+    <h1 class="text-center mb-5">貨幣匯率轉換器</h1>
+
+    <div class="col-12 d-flex flex-column flex-grow-1 mt-3">
+      <div class="row mb-3">
+        <div class="col-4">
+          <select class="form-select">
+            <option selected>請選擇幣別</option>
+          </select>
+        </div>
+        <div class="col">
+          <input type="number" class="form-control rounded-lg" min="0" placeholder="請輸入金額">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-4">
+          <select class="form-select">
+            <option selected>請選擇幣別</option>
+          </select>
+        </div>
+        <div class="col">
+          <input type="number" class="form-control" min="0" placeholder="請輸入金額">
+        </div>
+      </div>
+
+      <div class="text-end">
+        <button class="btn btn-sm link-secondary bi bi-plus-lg" id="addBtn">
+          加到我的最愛
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="favModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header position-relative">
+          <h3 class="modal-title fs-4">我的最愛</h3>
+          <button type="button" class="bi bi-x-lg btn position-absolute" style="top: 10px; right: 20px;"
+            data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" style="height: 300px;">
+          <ul class="h-100"></ul>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="position-absolute" style="top: 60px; right: 50px;">
+    <li>
+      <button type="button" class="btn bg-white shadow-sm" data-bs-toggle="tooltip" data-bs-placement="top"
+        data-bs-title="我的最愛" id="showBtn">
+        <i class="bi bi-heart-fill text-danger"></i>
+      </button>
+    </li>
+  </ul>
+
+  <div class="toast-container position-fixed end-0 p-3" style="bottom: 20px;"></div>
+
+
+  <!-- You can also require other files to run in this process -->
+  <script src="./renderer.js"></script>
+</body>
+
 </html>

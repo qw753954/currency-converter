@@ -1,14 +1,18 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('node:path')
+const fs = require('fs')
 
-function createWindow () {
+function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 600,
+    height: 800,
+    resizable: false,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
     }
   })
 
@@ -41,3 +45,28 @@ app.on('window-all-closed', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+const userDataPath = app.getPath('userData')
+
+ipcMain.on('readFile', (event, fileName) => {
+  const filePath = path.join(userDataPath, fileName)
+  console.log(filePath)
+  try {
+    const content = fs.readFileSync(filePath, 'utf8')
+    event.sender.send('readComplete', content)
+  } catch (err) {
+    new Error(err)
+    event.sender.send('readComplete', '')
+  }
+})
+
+ipcMain.on('writeFile', (event, fileName, txt, isAppend = false) => {
+  const type = isAppend ? 'appendFileSync' : 'writeFileSync'
+  const filePath = path.join(userDataPath, fileName)
+  try {
+    fs[type](filePath, JSON.stringify(txt), 'utf8')
+  } catch (err) {
+    new Error(err)
+  }
+  event.sender.send('writeComplete', null)
+})

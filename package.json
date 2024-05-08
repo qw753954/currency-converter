@@ -1,22 +1,51 @@
 {
-  "name": "electron-quick-start",
+  "name": "exchange-rate-tool",
   "version": "1.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist-all": "electron-builder -mw"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
-  "author": "GitHub",
+  "author": "PeiHan",
   "license": "CC0-1.0",
+  "build": {
+    "appId": "com.cilent.app.CurrencyConverter",
+    "productName": "Currency Converter",
+    "directories": {
+      "output": "build"
+    },
+    "extraFiles": [
+      "tools"
+    ],
+    "mac": {
+      "icon": "assets/images/swap.png",
+      "target": [
+        "zip"
+      ]
+    },
+    "win": {
+      "icon": "assets/images/swap.png",
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "allowElevation": true,
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
   "devDependencies": {
-    "electron": "^30.0.0"
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3"
   }
 }
