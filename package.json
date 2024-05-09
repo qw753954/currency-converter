@@ -29,7 +29,7 @@
     "win": {
       "icon": "assets/images/swap.png",
       "target": [
-        "nsis"
+        "portable"
       ]
     },
     "nsis": {
