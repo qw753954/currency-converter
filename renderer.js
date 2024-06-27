@@ -39,14 +39,14 @@ async function fetchCurrency(currency) {
   }
 }
 
-async function render(index = 0) {
-  function calculate(doller, isReverse) {
+async function render() {
+  function calculate(doller) {
     const rate = nowData[compared.currency()]
-    return isReverse ? doller / rate : doller * rate
+    return doller * rate
   }
   const now = {
     input: inputs[0],
-    doller: function () {
+    getDoller: function () {
       return this.input.value
     },
     select: selects[0],
@@ -56,9 +56,6 @@ async function render(index = 0) {
   }
   const compared = {
     input: inputs[1],
-    doller: function () {
-      return this.input.value
-    },
     select: selects[1],
     currency: function () {
       return this.select.value
@@ -68,11 +65,7 @@ async function render(index = 0) {
     nowData = await fetchCurrency(now.currency())
   }
 
-  if (index === 0) {
-    compared.input.value = calculate(now.doller(), false)
-  } else {
-    now.input.value = calculate(compared.doller(), true)
-  }
+  compared.input.value = calculate(now.getDoller())
 }
 
 function removeFav(index) {
